@@ -12,5 +12,12 @@ router.post(
 	],
 	userController.registerUser
 );
-
+router.post(
+	'/login',
+	[
+		body('email').isEmail().withMessage('Invalid credentials'),
+		body('password').isLength({ min: 6 }).withMessage('Invalid credentials'),
+	],
+	userController.loginUser
+);
 module.exports = router;
