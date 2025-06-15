@@ -225,3 +225,183 @@ Here's a step-by-step explanation of how the logout route works:
 5. The `logout` controller returns a success message to the user.
 
 Note: The `authUser` middleware is used to protect the logout route, which means that only authenticated users can access this route.
+
+
+
+
+Here is the documentation for the Captain Register endpoint:
+
+
+## POST `/captains/register`
+
+Registers a new captain in the system.
+
+
+### Request Body
+
+Send a JSON object with the following structure:
+
+```json
+{
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "john.doe@example.com",
+  "password": "yourpassword",
+  "vehicle": {
+    "color": "Red",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "Sedan"
+  }
+}
+```
+
+#### Field Requirements
+
+- `fullname.firstname` (string, required): Minimum 3 characters.
+- `fullname.lastname` (string, optional): Minimum 3 characters if provided.
+- `email` (string, required): Must be a valid email address.
+- `password` (string, required): Minimum 6 characters.
+- `vehicle.color` (string, required): Minimum 3 characters.
+- `vehicle.plate` (string, required): Minimum 3 characters.
+- `vehicle.capacity` (integer, required): Minimum 1.
+- `vehicle.vehicleType` (string, required): Minimum 3 characters.
+
+
+### Responses
+
+- **201 Created**
+  - Registration successful.
+  - Returns a JSON object with a JWT token and the created captain.
+  - Example:
+    ```json
+    {
+      "token": "jwt_token_here",
+      "captain": {
+        "fullname": {
+          "firstname": "John",
+          "lastname": "Doe"
+        },
+        "email": "john.doe@example.com",
+        "vehicle": {
+          "color": "Red",
+          "plate": "ABC123",
+          "capacity": 4,
+          "vehicleType": "Sedan"
+        }
+      }
+    }
+    ```
+
+- **400 Bad Request**
+  - Validation failed.
+  - Returns a JSON object with error messages.
+  - Example:
+    ```json
+    {
+      "errors": [
+        {
+          "msg": "Please enter a valid email address",
+          "param": "email",
+          "location": "body"
+        }
+      ]
+    }
+    ```
+
+- **500 Internal Server Error**
+  - Unexpected server error.
+
+
+### Captain Model
+
+The captain model is defined in `captain.model.js` and has the following schema:
+
+```javascript
+const captainSchema = new mongoose.Schema({
+  fullname: {
+    firstname: {
+      type: String,
+      required: true,
+      minlength: [3, 'First name must be at least 3 characters long'],
+      trim: true,
+    },
+    lastname: {
+      type: String,
+      minlength: [3, 'Last name must be at least 3 characters long'],
+      trim: true,
+    },
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please enter a valid email'],
+  },
+  password: {
+    type: String,
+    required: true,
+    select: false,
+  },
+  vehicle: {
+    color: {
+      type: String,
+      required: true,
+      minlength: [3, 'Color must be at least 3 characters long'],
+      trim: true,
+    },
+    plate: {
+      type: String,
+      required: true,
+      minlength: [3, 'Plate must be at least 3 characters long'],
+      trim: true,
+    },
+    capacity: {
+      type: Number,
+      required: true,
+      min: [1, 'Capacity must be at least 1'],
+    },
+    vehicleType: {
+      type: String,
+      required: true,
+      minlength: [3, 'Vehicle type must be at least 3 characters long'],
+      trim: true,
+    },
+  },
+});
+```
+
+### Captain Service
+
+The captain service is defined in `captain.service.js` and has a method `createCaptain` that creates a new captain document in the database.
+
+
+### Captain Controller
+
+The captain controller is defined in `captain.controller.js` and has a method `registerCaptain` that handles the registration of a new captain.
+
+
+### Captain Route
+
+The captain route is defined in `captain.routes.js` and has a route `/register` that handles the registration of a new captain.
+
+
+### Example Request
+
+```bash
+curl -X POST http://localhost:4000/captains/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullname": { "firstname": "John", "lastname": "Doe" },
+    "email": "john.doe@example.com",
+    "password": "yourpassword",
+    "vehicle": {
+      "color": "Red",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }}'
+```
