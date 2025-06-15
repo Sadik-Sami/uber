@@ -405,3 +405,95 @@ curl -X POST http://localhost:4000/captains/register \
       "vehicleType": "car"
     }}'
 ```
+
+### Captain Route
+
+The captain route is defined in `captain.routes.js` and has the following routes:
+
+#### POST `/captains/register`
+
+Registers a new captain in the system.
+
+##### Request Body
+
+Send a JSON object with the following structure:
+
+```json
+{
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "john.doe@example.com",
+  "password": "yourpassword",
+  "vehicle": {
+    "color": "Red",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+#### POST `/captains/login`
+
+Logs in an existing captain.
+
+##### Request Body
+
+Send a JSON object with the following structure:
+
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "yourpassword"
+}
+```
+
+#### GET `/captains/profile`
+
+Gets the profile of the authenticated captain.
+
+##### Request
+
+No request body is required. The captain's profile is retrieved from the database based on the authenticated token.
+
+##### Response
+
+Returns a JSON object with the captain's profile information.
+
+```json
+{
+  "captain": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+}
+```
+
+#### GET `/captains/logout`
+
+Logs out the authenticated captain.
+
+##### Request
+
+No request body is required.
+
+##### Response
+
+Returns a JSON object with a success message.
+
+```json
+{
+  "message": "Logout successful"
+}
+```
